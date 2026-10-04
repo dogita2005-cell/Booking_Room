@@ -1,56 +1,65 @@
-# Welcome to your Expo app 👋
+# 🏫 Campus Room Booking App (Mini-Project)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Ứng dụng di động hỗ trợ sinh viên và nhóm học tập tìm kiếm, kiểm tra trạng thái và đặt phòng học/phòng thực hành máy tính theo thời gian thực. Dự án được xây dựng nhằm giải quyết bài toán chồng chéo lịch sử dụng và tối ưu hóa việc quản lý không gian học tập.
 
-## Get started
+> **Tiến độ:** Giai đoạn 1 (Hoàn thiện UI/UX và Logic cơ bản)
 
-1. Install dependencies
+## ✨ Tính năng hiện tại (Tuần 1)
 
-   ```bash
-   npm install
-   ```
+- **Giao diện hiện đại (Flat Design):** Tối ưu hóa trải nghiệm người dùng với tông màu xám/trắng thanh lịch, hiển thị tốt trên các kích thước màn hình khác nhau.
+- **Danh sách phòng học:** Hiển thị chi tiết thông tin (hình ảnh, vị trí, sức chứa) bằng `FlatList`.
+- **Đồng bộ thời gian thực (Real-time):** Lắng nghe dữ liệu tức thời từ Firebase Firestore bằng `onSnapshot`. Giao diện tự động cập nhật ngay khi trạng thái phòng thay đổi.
+- **Bộ lọc tìm kiếm tức thì:** Tìm kiếm phòng học theo tên nhanh chóng mà không có độ trễ.
+- **Logic đặt phòng cơ bản:** Xử lý xác nhận đặt phòng và cập nhật trạng thái `available` sang `booked` trực tiếp lên cơ sở dữ liệu.
 
-2. Start the app
+## 🛠 Công nghệ sử dụng
+- **Framework:** React Native, Expo SDK
+- **Ngôn ngữ:** TypeScript
+- **Backend/Database:** Firebase Firestore
+- **Giao diện:** Flexbox, React Native Safe Area Context
 
-   ```bash
-   npx expo start
-   ```
+## 🚀 Hướng dẫn cài đặt
 
-In the output, you'll find options to open the app in a
+**1. Clone dự án về máy**
+\`\`\`bash
+git clone https://github.com/YOUR_USERNAME/VKU-RoomBooking-App.git
+cd VKU-RoomBooking-App
+\`\`\`
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+**2. Cài đặt các gói thư viện**
+\`\`\`bash
+npm install
+# hoặc
+npx expo install
+\`\`\`
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+**3. Cấu hình Firebase**
+Tạo file \`firebaseConfig.ts\` tại thư mục gốc của dự án và thêm cấu hình Firestore của bạn:
+\`\`\`typescript
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
-## Get a fresh project
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-When you're ready, run:
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
+\`\`\`
 
-```bash
-npm run reset-project
-```
+**4. Khởi chạy ứng dụng**
+\`\`\`bash
+npx expo start -c
+\`\`\`
+Quét mã QR bằng ứng dụng **Expo Go** trên thiết bị Android/iOS để trải nghiệm.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 📅 Kế hoạch phát triển (Giai đoạn tiếp theo)
+- [ ] Quản lý State toàn cục với Zustand (Session & Active Reservations).
+- [ ] Xây dựng hệ thống chống xung đột (Conflict Engine) và chia slot thời gian (2 tiếng/slot).
+- [ ] Tích hợp tính năng tạo mã QR Check-in.
+- [ ] Gửi thông báo nhắc nhở (Local Notification) 15 phút trước giờ nhận phòng.
