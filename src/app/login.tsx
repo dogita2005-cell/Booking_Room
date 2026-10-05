@@ -10,6 +10,19 @@ import * as Google from 'expo-auth-session/providers/google';
 // Hoàn tất phiên trình duyệt web sau khi chọn tài khoản Google
 WebBrowser.maybeCompleteAuthSession();
 
+const WEB_CLIENT_ID = '502029412632-4qgtssv1fb17ucrqerkqtdc3p6u92736.apps.googleusercontent.com'; // phải là client ID loại "Web application"
+
+// Nạp google-signin an toàn: Expo Go không có module native này nên không được import trực tiếp
+let GoogleSignin: any = null;
+if (Platform.OS !== 'web') {
+  try {
+    GoogleSignin = require('@react-native-google-signin/google-signin').GoogleSignin;
+    GoogleSignin.configure({ webClientId: WEB_CLIENT_ID });
+  } catch (e) {
+    GoogleSignin = null; // đang chạy trong Expo Go
+  }
+}
+
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,6 +58,35 @@ const [request, response, promptAsync] = Google.useAuthRequest({
     } finally {
       setLoading(false);
     }
+  };
+
+  // Đăng nhập Google bản native (Android/iOS) bằng google-signin
+  const handleGoogleNative = async () => {
+    if (!GoogleSignin) {
+      Alert.alert('Chưa hỗ trợ', 'Đăng nhập Google chỉ chạy trong bản APK đã build. Hãy dùng Email/Mật khẩu khi chạy Expo Go.');
+      return;
+    }
+    setLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      const res: any = await GoogleSignin.signIn();
+      if (res?.type === 'cancelled') return; // người dùng tự đóng hộp thoại
+      const idToken = res?.data?.idToken;
+      if (!idToken) throw new Error('Không lấy được idToken từ Google.');
+      await signInWithCredential(auth, GoogleAuthProvider.credential(idToken));
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      const msg = error?.message || 'Đăng nhập Google thất bại.';
+      Alert.alert('Lỗi', msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Web dùng expo-auth-session, điện thoại dùng google-signin
+  const handleGooglePress = () => {
+    if (Platform.OS === 'web') promptAsync();
+    else handleGoogleNative();
   };
 
   const handleEmailAuth = async () => {
@@ -128,8 +170,8 @@ const [request, response, promptAsync] = Google.useAuthRequest({
         {/* NÚT ĐĂNG NHẬP BẰNG GOOGLE */}
         <TouchableOpacity 
           style={styles.googleButton} 
-          onPress={() => promptAsync()}
-          disabled={!request || loading}
+          onPress={handleGooglePress}
+          disabled={loading || (Platform.OS === 'web' && !request)}
         >
           <Text style={styles.googleButtonText}>🌐 Đăng nhập bằng Google</Text>
         </TouchableOpacity>
